@@ -1,25 +1,40 @@
 " fzf buffers
-function! s:buflist()
-  redir => ls
-  silent ls
-  redir END
-  return split(ls, '\n')
+let s:fzf_buffers = []
+
+function! FzfBufEntered()
+  " move the current buffer to the top of the list
+  let l:name = resolve(expand("<afile>"))
+  if name != "" && name !~ "NERD_tree_.*"
+    let l:i = index(s:fzf_buffers, name)
+    if i != -1
+      call remove(s:fzf_buffers, i)
+    endif
+    let s:fzf_buffers = insert(s:fzf_buffers, name)
+  endif
 endfunction
 
-function! s:bufopen(e)
-  execute 'buffer' matchstr(a:e, '^[ 0-9]*')
+function! FzfBufDeleted()
+  " remove the buffer being deleted from the list
+  let l:name = resolve(expand("<afile>"))
+  if name != ""
+    let l:idx = index(s:fzf_buffers, name)
+    if idx != -1
+      call remove(s:fzf_buffers, idx)
+    endif
+  endif
 endfunction
 
-nnoremap <silent> <Leader>b :call fzf#run({
-\   'source':  reverse(<sid>buflist()),
-\   'sink':    function('<sid>bufopen'),
-\   'options': '-m',
-\   'down':    len(<sid>buflist()) + 2
-\ })<CR>
+augroup fzfbuf
+  autocmd!
+  autocmd BufAdd,BufEnter * call FzfBufEntered()
+  autocmd BufDelete * call FzfBufDeleted()
+augroup END
 
-" fzf locate
-command! -nargs=1 Locate call fzf#run(
-      \ {'source': 'locate <q-args>', 'sink': 'e', 'options': '-m'})
+command! FZFBuffers call fzf#run({
+  \'source': s:fzf_buffers,
+  \'sink' : 'e ',
+  \'options' : '-m',
+  \'tmux_height' : 8,
 
 " fzf mru
 command! FZFMru call fzf#run({

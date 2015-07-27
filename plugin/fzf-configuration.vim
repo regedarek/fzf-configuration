@@ -39,7 +39,7 @@ command! FZFBuffers call fzf#run({
 
 " fzf mru
 command! FZFMru call fzf#run({
-            \'source': v:oldfiles,
+            \'source': filter(copy(v:oldfiles), 'v:val !~ "NERD_tree"'),
             \'sink' : 'e ',
             \'options' : '-m',
             \})

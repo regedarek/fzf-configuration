@@ -35,6 +35,7 @@ command! FZFBuffers call fzf#run({
   \'sink' : 'e ',
   \'options' : '-m',
   \'tmux_height' : 8,
+  \})
 
 " fzf mru
 command! FZFMru call fzf#run({

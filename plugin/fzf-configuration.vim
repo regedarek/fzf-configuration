@@ -37,8 +37,6 @@ command! FZFBuffers call fzf#run({
   \'tmux_height' : 8,
   \})
 
-
-
 " fzf search lines
 function! s:line_handler(l)
   let keys = split(a:l, ':\t')
@@ -96,5 +94,5 @@ command! -nargs=* Ag call fzf#run({
 \ 'options': '--ansi --expect=ctrl-t,ctrl-v,ctrl-x '.
 \            '--multi --bind ctrl-a:select-all,ctrl-d:deselect-all '.
 \            '--color hl:68,hl+:110',
-\ 'down':    '50%'
+\ 'down':    '100%'
 \ })
